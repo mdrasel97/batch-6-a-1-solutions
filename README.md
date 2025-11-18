@@ -1,101 +1,117 @@
-Blog Answers
+# TypeScript Blog Answers
 
-1. What are some differences between interfaces and types in TypeScript?
-   TypeScript-এ ইন্টারফেস এবং টাইপ উভয়ই ডেটা স্ট্রাকচার বর্ণনা করতে ব্যবহৃত হয়। তবে তাদের মধ্যে কিছু গুরুত্বপূর্ণ পার্থক্য রয়েছে। ইন্টারফেস সাধারণত অবজেক্ট এবং ক্লাসের জন্য ব্যবহৃত হয়, যেখানে type অবজেক্ট ছাড়াও প্রিমিটিভ বা অন্যান্য টাইপের জন্য ব্যবহার করা যেতে পারে।
+## 1. Differences between Interfaces and Types in TypeScript
 
-ইন্টারফেস (Interface): ইন্টারফেস extends কীওয়ার্ড ব্যবহার করে অন্য একটি ইন্টারফেস কে এক্সটেন্ড বা প্রসারিত করতে পারে। boolean টাইপের ডাটার জন্য interface ব্যবহার করা যায় না, কারণ interface-এ সমান চিহ্ন (=) ব্যবহার করা যায় না।
+Interface এবং Type উভয়ই TypeScript-এ ডেটা স্ট্রাকচার বর্ণনা করতে ব্যবহৃত হয়, তবে তাদের মধ্যে কিছু গুরুত্বপূর্ণ পার্থক্য রয়েছে।
 
-পার্থক্যগুলো:
--- Interface সাধারণত object-এর কাঠামো define করতে ব্যবহৃত হয়।
+### ✔ Interface
 
-Type আরও flexible — object, union, function type, primitives— সবকিছু define করতে পারে।
+- মূলত object structure define করতে ব্যবহৃত হয়।
+- `extends` ব্যবহার করে অন্য interface প্রসারিত করা যায়।
+- একই interface একাধিকবার declare করলে অটোমেটিকভাবে merge হয়।
 
--- Interface extend করা যায়
+### ✔ Type Alias
 
-interface A extends B {} -- Type সহজে union বা combination তৈরি করতে পারে: type Result = A | B
+- আরও flexible — object, union, primitives, function type— সবকিছু define করতে পারে।
+- একবার declared হলে পুনরায় merge হয় না।
+- union এবং complex type তৈরি করতে সুবিধা।
 
--- Interface দিয়া multiple বার declare করলে merge হয়। Type merge হয় না একবার define মানে শেষ।
+### উদাহরণ (Interface)
 
-Example
-Interface Example:
-
+```ts
 interface User {
-name: string;
-age: number;
+  name: string;
+  age: number;
 }
 
 const person: User = {
-name: "Cat",
-age: 23,
+  name: "Cat",
+  age: 23,
 };
-Type Alias Example:
+```
 
+### উদাহরণ (Type)
+
+```ts
 type Status = "success" | "error";
 
 type Product = {
-title: string;
-price: number;
+  title: string;
+  price: number;
 };
 
 const laptop: Product = {
-title: "MacBook",
-price: 1500,
+  title: "MacBook",
+  price: 1500,
 };
-টাইপস্ক্রিপ্ট শিখতে গেলে Interface এবং Type দুটোই অপরিহার্য। Interface প্রধানত অবজেক্টের কাঠামো বা ডিজাইন বর্ণনা করে, আর Type বিভিন্ন ডেটা টাইপের নামকরণ করতে পারে। কখন কোনটি ব্যবহার করতে হবে, সেই ধারণা থাকলে কোড আরও পরিচ্ছন্ন এবং সহজে বোধগম্য হয়।
+```
 
-\*\*2. What is the use of the keyof keyword in TypeScript? Provide an example.
-TypeScript-এ keyof কিওয়ার্ডের ব্যবহার
+Interface দিয়ে মূলত object এর structure define করা হয়, আর Type আরও broader — সব ধরনের ডেটা টাইপ represent করতে পারে।
 
-TypeScript আমাদের টাইপ সেফটি এবং কোডের স্থিতিশীলতা বাড়াতে অনেক শক্তিশালী টুল দেয়। এর মধ্যে একটি গুরুত্বপূর্ণ কিওয়ার্ড হলো keyof।
+---
 
-keyof কী?
+## 2. What is the use of the `keyof` keyword in TypeScript?
 
-keyof একটি type operator যা একটি অবজেক্ট টাইপকে ইনপুট হিসেবে নিয়ে সেই অবজেক্টের সকল কী (keys) এর string বা numeric literal union type তৈরি করে। সহজভাবে বলতে গেলে, এটি আমাদের বলে দেয়, “এই অবজেক্টে কোন কোন প্রপার্টি আছে।”
+`keyof` একটি type operator যা একটি object type এর সবগুলা key-এর union তৈরি করে।
 
-উদাহরণ:
+### ✔ উদাহরণ
+
+```ts
 type User = {
-name: string;
-age: number;
-email: string;
+  name: string;
+  age: number;
+  email: string;
 };
 
-// keyof User
-type UserKeys = keyof User;
+type UserKeys = keyof User; // 'name' | 'age' | 'email'
 
-const key: UserKeys = "name"; // ✔️ valid
+const key: UserKeys = "name"; // ✔ valid
+```
 
-Key Takeaway
+### Key Takeaway
 
-keyof ব্যবহার করলে object-এর key গুলো type-safe হয়, এবং ভুল key access করার সম্ভাবনা কমে।
+`keyof` ব্যবহার করলে object key access আরও type-safe হয় এবং ভুল key ব্যবহারের সম্ভাবনা কমে।
 
-3. Explain the difference between any, unknown, and never types in TypeScript.
-   TypeScript আলাদা আলাদা special type রাখে কারণ কোডের আচরণ স্পষ্ট করে দেখানো লাগে। কোন ভ্যালু কেমন behave করবে, কোথায় error ধরবে, কোথায় strict হবে এগুলা বোঝানোর জন্যই এই special type গুলো আছে।
+---
 
-any
-কখনো exact type জানা না থাকলে বা দ্রুত কিছু test করতে চাইলে any ব্যবহার হয়।
-সবচেয়ে বড় সমস্যা হলো TypeScript তখন আর কিছু check করে না।
-মানে তুমি যাই করো, ভুল হলেও error দিবে না। এতে কোড risky হয়ে যায়।
-unknown
-unknown দেখতে any-র মতো, কিন্তু safer।
-কারণ ব্যবহার করার আগে type check করা লাগবই।
-তাই ভুল ধরে ফেলে আগেই।
-এটা সেই সব situation-এ ভালো লাগে যেখানে incoming data unpredictable।
-never
-never মানে এই function কোনোদিন কিছু return করে না।
-যেমন error throw করে, infinite loop-এ যায়, বা এমন জায়গা যেখানে আসলে পৌঁছানোর কথা না এই unreachable state দেখাতে never ব্যবহার হয়।
-Example
-// any
+## 3. Difference between `any`, `unknown`, and `never` in TypeScript
+
+TypeScript-এ special types রয়েছে যাতে কোড আরও type-safe হয়।
+
+### ✔ any
+
+- যখন type জানা নেই তখন ব্যবহার করা হয়।
+- TypeScript কোন error check করে না — risky।
+
+```ts
 let data: any = "hello";
-data = 20;
+data = 20; // allowed
+```
 
-// unknown
+### ✔ unknown
+
+- any-এর মতো flexible কিন্তু safer।
+- ব্যবহার করার আগে type check করা লাগে।
+
+```ts
 let value: unknown = "test";
 if (typeof value === "string") {
-console.log(value.toUpperCase());
+  console.log(value.toUpperCase());
 }
+```
 
-// never
+### ✔ never
+
+- যেসব function কখনো return করে না (যেমন error throw করে বা infinite loop) তাদের জন্য।
+
+```ts
 function crash(): never {
-throw new Error("Something went wrong");
+  throw new Error("Something went wrong");
 }
-any flexible কিন্তু dangerous, unknown safe কারণ check লাগে, আর never সেই জায়গা দেখায় যেখানে function কখনোই শেষ হয় না বা return করে না। TypeScript-এ any, unknown, এবং never এই তিনটি বিশেষ টাইপ বিভিন্ন উদ্দেশ্যে ব্যবহৃত হয়। এগুলো ঠিকভাবে বুঝলে টাইপ সেফটি অনেক বাড়ে।
+```
+
+### Summary
+
+- **any** → flexible but unsafe.
+- **unknown** → safer version of any.
+- **never** → functions that never return.
