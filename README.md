@@ -109,9 +109,3 @@ function crash(): never {
   throw new Error("Something went wrong");
 }
 ```
-
-### Summary
-
-- **any** → flexible but unsafe.
-- **unknown** → safer version of any.
-- **never** → functions that never return.
